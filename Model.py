@@ -28,5 +28,4 @@ class Model:
 
         # Instantiate and train the model
         model = RandomForestClassifier()
-        model.fit(X, y)
-        return model
+        return model.fit(X, y)

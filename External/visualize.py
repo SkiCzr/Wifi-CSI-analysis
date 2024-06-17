@@ -7,7 +7,7 @@ import csiread
 import sys, getopt
 
 fig, [ax0, ax1] = plt.subplots(nrows=2,ncols=1)
-node_dict = {    "bc:6e:e2:d0:2:5": {'Color': np.asarray([103,0,31])/255, 'Name': "Node 10"},
+node_dict = {    "bc:6e:e2:d0:Individual test:5": {'Color': np.asarray([103,0,31])/255, 'Name': "Node 10"},
 				 "84:7b:57:62:a:48": {'Color': np.asarray([253,219,199])/255, 'Name': "Node11"},
 				 "84:7b:57:61:d8:5c": {'Color': np.asarray([67,147,195])/255, 'Name': "Node12"},
 				 "84:7b:57:60:cc:1e": {'Color': np.asarray([178,24,43])/255, 'Name': "Node13"},

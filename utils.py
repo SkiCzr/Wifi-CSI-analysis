@@ -15,7 +15,6 @@ def get_csi(csifile):
         try:
             csi = csiread.Picoscenes(csifile, {'CSI': [52, 2, 1], 'MPDU': 1522})
             csi.read()
-
             return csi.raw['CSI']['CSI']
         except IndexError as e:
             pass
@@ -39,20 +38,19 @@ def create_dataset(data_folder):
     for file_index, file in enumerate(csi_files):
         for pack_index, packet in enumerate(file):
             pack = []
-            # Taking the timestamp of the csi file
-            pack.append(file_names[file_index].split("/")[2][0:16])
             # Taking the state of the room in the csi file(True - has person, False - does not have person)
-            pack.append(file_names[file_index].split("/")[2][16:-1].split(".")[0].split("_"))
-
+            # pack.append(file_names[file_index].split("/")[-1][18:-1].split(".")[0].split("_"))
+            pack.append(file_names[file_index].split("/")[-1][18:-1].split(".")[0])
+            if len(pack[-1]) == 1:
+                pack[-1] = pack[-1][0]
             stats = []
             for complex in packet:
                 stats.append((np.abs(complex[0])[0], np.angle(complex[0])[0]))
                 stats.append((np.abs(complex[1])[0], np.angle(complex[1])[0]))
             pack.append(stats)
-
             data.append(pack)
     random.shuffle(data)
-    df = pd.DataFrame(data, columns=['Timestamp', 'hasPerson', 'Data'])
+    df = pd.DataFrame(data, columns=['hasPerson', 'Data'])
     return df
 
 
@@ -62,31 +60,37 @@ def preprocess_data(data):
     return [item for sublist in data for item in sublist]
 
 
-# def trainModel(dataset):
-#     # Splitting data into features and labels
-#     X = dataset['Data']
-#     y = dataset['hasPerson']
-#
-#     # Splitting into training and testing sets
-#     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=42)
-#     X_train = X_train.apply(preprocess_data)
-#     X_test = X_test.apply(preprocess_data)
-#
-#     # Converting to list of lists or arrays for model compatibility
-#     X_train = list(X_train)
-#     X_test = list(X_test)
-#
-#     # Instantiate and train the model
-#     model = RandomForestClassifier()
-#     model.fit(X_train, y_train)
-#
-#     # Make predictions
-#     y_pred = model.predict(X_test)
-#
-#     # Evaluate the model
-#     accuracy = accuracy_score(y_test, y_pred)
-#     print(f'Accuracy: {accuracy}')
-#
-#     # Optional: Displaying the predictions and actual values
-#     for i in range(len(y_test)):
-#         print(f'Actual: {y_test.iloc[i]}, Predicted: {y_pred[i]}')
+def IndividualAcc(dataset, test_sz):
+    # Splitting data into features and labels
+    X = dataset['Data']
+    y = dataset['hasPerson']
+    for index, entry in enumerate(y):
+        if entry == ['False', 'False']:
+            y[index] = 'FF'
+        if entry == ['True', 'False']:
+            y[index] = 'TF'
+        if entry == ['False', 'True']:
+            y[index] = 'FT'
+        if entry == ['True', 'True']:
+            y[index] = 'TT'
+    # Splitting into training and testing sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_sz, random_state=42)
+    X_train = X_train.apply(preprocess_data)
+    X_test = X_test.apply(preprocess_data)
+
+    # Converting to list of lists or arrays for model compatibility
+    X_train = list(X_train)
+    X_test = list(X_test)
+
+    # Instantiate and train the model
+    model = RandomForestClassifier()
+    print(y_train)
+    print(X_train)
+    model.fit(X_train, y_train)
+
+    # Make predictions
+    y_pred = model.predict(X_test)
+
+    # Evaluate the model
+    accuracy = accuracy_score(y_test, y_pred)
+    print(f'Accuracy: {accuracy}')

@@ -132,7 +132,7 @@ def load_settings(clients):
 def advanced_options(clients):
 	clients = np.asarray(clients)
 	print(f"Current rotation: {', '.join([f'{idx}: {check_known_clients(mac)}' for idx, mac in enumerate(clients)])}")
-	print(f"Please enter new sequence, seperated by spaces (e.g., '0 4 1 2'), or choose ASC(ending) or DESC(ending):")
+	print(f"Please enter new sequence, seperated by spaces (e.g., '0 4 1 Individual test'), or choose ASC(ending) or DESC(ending):")
 	#print("Note that the entered sequence is from the POV of this node; you may choose another starting node later*")
 	sort = input().lower()
 	if sort in ["asc", "desc"]:
@@ -152,7 +152,7 @@ def advanced_options(clients):
 		clients = clients.tolist()
 	print("Setting option for transmission sweeping, leave empty for none.")
 	print("Provide the duration, rate, and repeats (space seperated) per element (comma seperated) as follow:")
-	print("0.1 100 10, 0.2 100 5, 1 5 1")
+	print("0.1 100 10, 0.Individual test 100 5, 1 5 1")
 	sweeping_params_input = [(float(params.split(" ")[0]), float(params.split(" ")[1]), int(params.split(" ")[2]))  for params in input().split(", ")]
 	global SWEEPING_PARAMS
 	for sweeping_param in sweeping_params_input:
